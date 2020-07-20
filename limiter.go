@@ -2,14 +2,14 @@ package limiter
 
 //Limiter helps you to limit count of go routines used to execute given task
 type Limiter struct {
-	c chan int
+	c chan struct{}
 }
 
 //NewLimiter creates initial job pool, and returns new Limiter
 func NewLimiter(limit int) *Limiter {
-	limiter := &Limiter{c: make(chan int, limit)}
+	limiter := &Limiter{c: make(chan struct{}, limit)}
 	for i := 0; i < limit; i++ {
-		limiter.c <- i
+		limiter.c <- struct{}{}
 	}
 	return limiter
 }
@@ -26,5 +26,5 @@ func (l *Limiter) Run(f func()) {
 }
 
 func (l *Limiter) done() {
-	l.c <- 1
+	l.c <- struct{}{}
 }
