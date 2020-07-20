@@ -1,5 +1,9 @@
 package limiter
 
+import (
+	"context"
+)
+
 //Limiter helps you to limit count of go routines used to execute given task
 type Limiter struct {
 	c chan struct{}
@@ -23,6 +27,11 @@ func (l *Limiter) Run(f func()) {
 		}()
 		f()
 	}()
+}
+
+//Wait waits until context is cancelled
+func (l *Limiter) Wait(ctx context.Context) {
+	<-ctx.Done()
 }
 
 func (l *Limiter) done() {
